@@ -11,7 +11,7 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Build docker container for each microservices
+          name: Docker containers for each microservices
           command: |
             echo "--------- Installing dependencies-----------"
             sudo curl -LO https://nodejs.org/dist/v18.0.0/node-v18.0.0-linux-x64.tar.xz
@@ -20,6 +20,7 @@ jobs:
             node --version => v18.0.0
             sudo apt install nodejs
             echo "--------- Building Images ------------"
+
             docker build -t udagram-api-feed ./udagram-api-feed
             docker tag udagram-api-feed joeldanjuma/udagram-api-feed:v1
 
@@ -30,7 +31,7 @@ jobs:
             docker tag udagram-frontend joeldanjuma/udagram-frontend:v1
 
             docker build -t reverseproxy ./udagram-reverseproxy
-            docker tag udagram-reverseproxy joeldanjuma/reverseproxy:v1
+            docker tag reverseproxy joeldanjuma/reverseproxy:v1
 
             echo "-------- Images succesfully built----------"
             echo " ------- login in to hub--------"
