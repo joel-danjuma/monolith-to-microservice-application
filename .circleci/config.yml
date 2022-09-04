@@ -1,0 +1,48 @@
+version: 2.1
+
+jobs:
+  lint-app:
+    docker:
+      - image: circleci/node:12.20.2
+    steps:
+      - checkout
+  build-docker:
+    machine: true
+    steps:
+      - checkout
+      - run:
+          name: Build docker container for each microservices
+          command: |
+            echo "--------- Installing dependencies-----------"
+            sudo curl -LO https://nodejs.org/dist/v18.0.0/node-v18.0.0-linux-x64.tar.xz
+            sudo tar -xvf node-v18.0.0-linux-x64.tar.xz
+            sudo cp -r node-v18.0.0-linux-x64/{bin,include,lib,share} /usr/
+            node --version => v18.0.0
+            sudo apt install nodejs
+            echo "--------- Building Images ------------"
+            docker build -t udagram-api-feed ./udagram-api-feed
+            docker tag udagram-api-feed joeldanjuma/udagram-api-feed:v1
+
+            docker build -t udagram-api-user ./udagram-api-user
+            docker tag udagram-api-user joeldanjuma/udagram-api-user:v1
+
+            docker build -t udagram-frontend ./udagram-frontend
+            docker tag udagram-frontend joeldanjuma/udagram-frontend:v1
+
+            docker build -t reverseproxy ./udagram-reverseproxy
+            docker tag udagram-reverseproxy joeldanjuma/reverseproxy:v1
+
+            echo "-------- Images succesfully built----------"
+            echo " ------- login in to hub--------"
+            docker login -u joeldanjuma -p $DOCKERPASS
+            echo "-------------- Pushing images to dockerhub-------"
+            docker push joeldanjuma/udagram-api-feed:v1
+            docker push joeldanjuma/udagram-api-user:v1
+            docker push joeldanjuma/udagram-frontend:v1
+            docker push joeldanjuma/reverseproxy:v1
+workflows:
+  default:
+    jobs:
+      - lint-app
+      - build-docker:
+          requires: [lint-app]
