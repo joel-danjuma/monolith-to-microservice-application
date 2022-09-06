@@ -39,7 +39,7 @@ jobs:
             echo "-------------- Pushing images to dockerhub-------"
             docker push joeldanjuma/udagram-api-feed:v1
             docker push joeldanjuma/udagram-api-user:v1
-            docker push joeldanjuma/udagram-frontend:v1
+            docker push joeldanjuma/udagram-frontend:v2
             docker push joeldanjuma/reverseproxy:v1
 workflows:
   default:
